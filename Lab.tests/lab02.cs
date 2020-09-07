@@ -10,9 +10,9 @@ namespace Lab.Tests
         public void ViewBalanceTest()
         {
             // Arrange
-            double balance = Program.balance;
+            decimal balance = Program.balance;
             // Act
-            double result = Program.ViewBalance(balance);
+            decimal result = Program.ViewBalance(balance);
             // Assert
             Assert.Equal(result, Program.balance);
         }
@@ -23,7 +23,7 @@ namespace Lab.Tests
             // Arrange
             Program.balance = 20;
             // Act
-            Program.Withdraw(10.00);
+            Program.Withdraw(10, 10);
             // Assert
             Assert.Equal(10, Program.balance);
         }
@@ -34,23 +34,29 @@ namespace Lab.Tests
             // Arrange
             Program.balance = 20;
             // Act
-            Program.Withdraw(21.00);
+            Program.Withdraw(22, 42);
             // Assert
-            Assert.Equal(20, Program.balance);
+            Assert.Equal(0, Program.balance);
         }
 
         [Theory]
-        [InlineData("Withdrawal was successful", 20.00, 30.00)]
-        [InlineData("You are trying to withdraw an invalid amount", 0, 500)]
-        [InlineData("10 is greater than your balance of 5", 10.00, 5.00)]
-        public void CannotOverdraft(string message, double amount, double balance)
+        [InlineData(30, 20, 10)]
+        [InlineData(20, 30, 0)]
+        [InlineData(30, -20, 30)]
+        public void WithdrawTest(decimal balance, decimal withraw, decimal expect)
         {
-            // Arrange
-            Program.balance = balance;
-            // Act
-            string response = Program.Withdraw(amount);
-            // Assert
-            Assert.Equal(message, response);
+            decimal result = Program.Withdraw(balance, withraw);
+            Assert.Equal(result, expect);
+        }
+
+        [Theory]
+        [InlineData(30, 80, 110)]
+        [InlineData(20, 30, 50)]
+        [InlineData(30, -20, 30)]
+        public void DepositTest(decimal balance, decimal deposit, decimal expect)
+        {
+            decimal result = Program.Deposit(balance, deposit);
+            Assert.Equal(result, expect);
         }
 
         [Fact]
@@ -59,7 +65,7 @@ namespace Lab.Tests
             // Arrange
             Program.balance = 20;
             // Act
-            Program.Deposit(10.00);
+            Program.Deposit(20, 10);
             // Assert
             Assert.Equal(30, Program.balance);
         }
